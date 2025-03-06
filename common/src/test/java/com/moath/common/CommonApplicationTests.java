@@ -1,13 +1,13 @@
-package com.moath.wordlebot;
+package com.moath.common;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class WordlebotApplicationTests {
+class CommonApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }

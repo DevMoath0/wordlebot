@@ -1,6 +1,7 @@
-package com.moath.wordlebot.config;
+package com.moath.app.config;
 
-import com.moath.wordlebot.service.WordleTrackerBotService;
+import com.moath.app.service.impl.BotServiceImpl;
+import com.moath.app.service.impl.TrackerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -16,19 +17,19 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 @RequiredArgsConstructor
 public class WordleBotInitializer {
 
-    private final WordleTrackerBotService wordleBot;
+    private final BotServiceImpl botService;
 
     @EventListener({ContextRefreshedEvent.class})
     public void init() {
         try {
             log.info("Attempting to delete existing webhook...");
             DeleteWebhook deleteWebhook = new DeleteWebhook();
-            boolean isWebhookDeleted = wordleBot.execute(deleteWebhook);
+            boolean isWebhookDeleted = botService.execute(deleteWebhook);
             log.info("Webhook deletion status: {}", isWebhookDeleted);
 
             log.info("Initializing bot with long polling...");
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-            telegramBotsApi.registerBot(wordleBot);
+            telegramBotsApi.registerBot(botService);
 
             log.info("Bot successfully initialized and registered");
         } catch (TelegramApiException e) {

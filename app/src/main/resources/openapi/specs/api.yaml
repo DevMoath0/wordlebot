@@ -1,0 +1,136 @@
+openapi: 3.0.3
+info:
+  title: Wordle Bot Api
+  version: 1.0.0
+  description: Api to execute commands
+servers:
+  - url: http://localhost:8080
+paths:
+  /wordle/board/v1:
+    get:
+      tags:
+        - wordle
+      summary: Get Wordle Leaderboard
+      description: Returns the current Wordle leaderboard as a formatted string.
+      responses:
+        '200':
+          description: Successful response with the leaderboard.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  leaderboard:
+                    type: string
+        '400':
+          description: Error retrieving leaderboard.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wordle/result/v1:
+    post:
+      tags:
+        - wordle
+      summary: Record a Wordle Result
+      description: Records a Wordle result for a player.
+      requestBody:
+        required: true
+        description: The wordle result details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WordleResult'
+      responses:
+        '200':
+          description: Wordle result recorded successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordleResult'
+        '400':
+          description: Error recording wordle result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wordle/process/v1:
+    post:
+      tags:
+        - wordle
+      summary: Process Daily Wordle Results
+      description: Processes the daily results (e.g., marks missed entries and updates scores).
+      responses:
+        '200':
+          description: Daily processing completed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Error during daily processing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wordle/help/v1:
+    get:
+      tags:
+        - wordle
+      summary: Get Help Information
+      description: Retrieves help instructions for the available commands.
+      responses:
+        '200':
+          description: Help information retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  help:
+                    type: string
+  /wordle/nafar/v1:
+    get:
+      tags:
+        - wordle
+      summary: Get Nafar Information
+      description: Retrieves output for the nafar command.
+      responses:
+        '200':
+          description: Nafar information retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nafar:
+                    type: string
+
+components:
+  schemas:
+    WordleResult:
+      type: object
+      properties:
+        telegramId:
+          type: string
+          example: "123456789"
+        username:
+          type: string
+          example: "playerName"
+        tries:
+          type: integer
+          description: "Number of tries it took to solve Wordle (1 to 6, or 7 for a loss)"
+          example: 3
+      required:
+        - telegramId
+        - username
+        - tries
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Error description here"

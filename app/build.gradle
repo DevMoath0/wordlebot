@@ -1,0 +1,97 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.openapi.generator' version '7.0.0'
+}
+
+group = 'com.moath'
+version = '0.0.1-SNAPSHOT'
+
+def openApiSpec = "$projectDir/src/main/resources/openapi/specs/"
+def openApiGeneratedSourcesDir = "$buildDir/generated/openapi"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+springBoot {
+    mainClass = 'com.moath.app'
+}
+
+dependencies {
+    implementation project(':common')
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.mysql:mysql-connector-j:9.1.0'
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.4'
+    implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+    //Telegram
+    implementation 'org.telegram:telegrambots:6.8.0'
+
+    //OpenApi
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.4'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.register('wordleOpenApiGenerate', GenerateTask) {
+    generatorName.set("spring")
+    inputSpec.set(openApiSpec + "api.yaml")
+    outputDir.set("$openApiGeneratedSourcesDir")
+    apiPackage.set("com.moath.generated.api")
+    modelPackage.set("com.moath.generated.model")
+    generateModelTests.set(false)
+    generateApiTests.set(false)
+    skipOverwrite.set(false)
+    configOptions.putAll([
+            "useSpringBoot3"      : "true",
+            "useJakartaEe"        : "true",
+            "dateLibrary"         : "java8-localdatetime",
+            "interfaceOnly"       : "true",
+            "serializableModel"   : "true",
+            "skipDefaultInterface": "true",
+            "implicitHeaders"     : "true",
+            "useTags"             : "true",
+            "openApiNullable"     : "true",
+    ])
+}
+
+tasks.register('openApiGenerateAll') {
+    dependsOn 'wordleOpenApiGenerate'
+}
+
+tasks.named('compileJava') {
+    dependsOn('openApiGenerateAll')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += "$openApiGeneratedSourcesDir"
+        }
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

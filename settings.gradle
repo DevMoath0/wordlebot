@@ -1,1 +1,5 @@
 rootProject.name = 'wordlebot'
+include 'common'
+include 'app'
+
+project(':common').projectDir = file('common')

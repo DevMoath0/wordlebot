@@ -1,4 +1,4 @@
-package com.moath.wordlebot.config;
+package com.moath.app.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
