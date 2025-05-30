@@ -3,6 +3,7 @@ package com.moath.wordlebot.controller;
 import com.moath.wordlebot.dto.WordleResultDto;
 import com.moath.wordlebot.service.WordleTrackerService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
